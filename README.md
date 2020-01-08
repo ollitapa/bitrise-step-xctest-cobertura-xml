@@ -1,7 +1,13 @@
-# XCTest cobertura xml
+# XCTest results to Cobertura XML
 
-Converts test results from XCTest step to Cobertura formatted xml to be uploaded to Coveralls or Sonarqube
+Converts test results from XCTest step to Cobertura formatted XML to be uploaded to Coveralls or Sonarqube
 
+It uses a swift script originally developed by [Csaba](https://github.com/csaby02) in this [this blog](https://www.cognizantsoftvision.com/blog/integrate-xcode-code-coverage-xccov-into-jenkins/).
+
+You can specify the location of your test result bundle or use the default place provided by Bitrise Xcode Test step.
+Output directory for files is the Bitrise deploy dir by default, but you can change it to more suitable place. Paths to both JSON and XML files is exported as a result of this step.
+
+![Example](ExampleUI.png)
 
 ## How to use this Step
 

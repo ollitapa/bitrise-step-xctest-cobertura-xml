@@ -8,7 +8,7 @@
 # - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
 
 title: |-
-  XCTest Cobertura xml
+  XCTest result to Cobertura XML
 summary: |
   Converts XCTest results to cobertura compatible xml
 description: |
@@ -47,14 +47,6 @@ is_requires_admin_user: false
 is_always_run: false
 is_skippable: false
 run_if: ""
-
-# deps:
-#   brew:
-#   - name: git
-#   - name: wget
-#   apt_get:
-#   - name: git
-#   - name: wget
 
 toolkit:
   go:
