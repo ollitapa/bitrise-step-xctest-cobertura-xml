@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd" [
+    <!ELEMENT coverage (sources?, packages)>
+    <!ATTLIST coverage line-rate CDATA #REQUIRED>
+    <!ATTLIST coverage branch-rate CDATA #REQUIRED>
+    <!ATTLIST coverage lines-covered CDATA #REQUIRED>
+    <!ATTLIST coverage lines-valid CDATA #REQUIRED>
+    <!ATTLIST coverage branches-covered CDATA #REQUIRED>
+    <!ATTLIST coverage branches-valid CDATA #REQUIRED>
+    <!ATTLIST coverage complexity CDATA #REQUIRED>
+    <!ATTLIST coverage version CDATA #REQUIRED>
+    <!ATTLIST coverage timestamp CDATA #REQUIRED>
+    <!ELEMENT sources (source)*>
+    <!ELEMENT source (#PCDATA)>
+    <!ELEMENT packages (package)*>
+    <!ELEMENT package (classes)>
+    <!ATTLIST package name CDATA #REQUIRED>
+    <!ATTLIST package line-rate CDATA #REQUIRED>
+    <!ATTLIST package branch-rate CDATA #REQUIRED>
+    <!ATTLIST package complexity CDATA #REQUIRED>
+    <!ELEMENT classes (class)*>
+    <!ELEMENT class (methods, lines)>
+    <!ATTLIST class name CDATA #REQUIRED>
+    <!ATTLIST class filename CDATA #REQUIRED>
+    <!ATTLIST class line-rate CDATA #REQUIRED>
+    <!ATTLIST class branch-rate CDATA #REQUIRED>
+    <!ATTLIST class complexity CDATA #REQUIRED>
+    <!ELEMENT methods (method)*>
+    <!ELEMENT method (lines)>
+    <!ATTLIST method name CDATA #REQUIRED>
+    <!ATTLIST method signature CDATA #REQUIRED>
+    <!ATTLIST method line-rate CDATA #REQUIRED>
+    <!ATTLIST method branch-rate CDATA #REQUIRED>
+    <!ATTLIST method complexity CDATA #REQUIRED>
+    <!ELEMENT lines (line)*>
+    <!ELEMENT line (conditions)*>
+    <!ATTLIST line number CDATA #REQUIRED>
+    <!ATTLIST line hits CDATA #REQUIRED>
+    <!ATTLIST line branch CDATA "false">
+    <!ATTLIST line condition-coverage CDATA "100%">
+    <!ELEMENT conditions (condition)*>
+    <!ELEMENT condition EMPTY>
+    <!ATTLIST condition number CDATA #REQUIRED>
+    <!ATTLIST condition type CDATA #REQUIRED>
+    <!ATTLIST condition coverage CDATA #REQUIRED>
+]>
+
+<coverage line-rate="0.6363636363636364" branch-rate="1.0" lines-covered="49" lines-valid="77" timestamp="1578483185.2627091" version="diff_coverage 0.1" complexity="0.0" branches-valid="1.0" branches-covered="1.0">
+    <sources>
+        <source>/Users/ollitapa/go/src/github.com/ollitapa/bitrise-step-xctest-cobertura-xml/testing</source>
+    </sources>
+    <packages>
+        <package name="Users.ollitapa.Documents.MyProject.MyProjectTests" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+            <classes>
+                <class name="Users.ollitapa.Documents.MyProject.MyProjectTests.MyProjectTests" filename="/Users/ollitapa/Documents/MyProject/MyProjectTests/MyProjectTests.swift" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+                    <lines>
+                        <line number="15" branch="false" hits="1"/>
+                        <line number="16" branch="false" hits="1"/>
+                        <line number="17" branch="false" hits="1"/>
+                        <line number="18" branch="false" hits="1"/>
+                        <line number="19" branch="false" hits="1"/>
+                        <line number="20" branch="false" hits="1"/>
+                        <line number="21" branch="false" hits="1"/>
+                        <line number="16" branch="false" hits="1"/>
+                        <line number="16" branch="false" hits="1"/>
+                        <line number="17" branch="false" hits="1"/>
+                        <line number="17" branch="false" hits="1"/>
+                        <line number="18" branch="false" hits="1"/>
+                        <line number="18" branch="false" hits="1"/>
+                        <line number="19" branch="false" hits="1"/>
+                        <line number="19" branch="false" hits="1"/>
+                    </lines>
+                </class>
+            </classes>
+        </package>
+        <package name="Users.ollitapa.Documents.MyProject.MyProject" line-rate="0.6153846153846154" branch-rate="1.0" complexity="0.0">
+            <classes>
+                <class name="Users.ollitapa.Documents.MyProject.MyProject.SceneDelegate" filename="/Users/ollitapa/Documents/MyProject/MyProject/SceneDelegate.swift" line-rate="0.6153846153846154" branch-rate="1.0" complexity="0.0">
+                    <lines>
+                        <line number="17" branch="false" hits="1"/>
+                        <line number="18" branch="false" hits="1"/>
+                        <line number="19" branch="false" hits="1"/>
+                        <line number="20" branch="false" hits="1"/>
+                        <line number="21" branch="false" hits="1"/>
+                        <line number="22" branch="false" hits="1"/>
+                        <line number="23" branch="false" hits="1"/>
+                        <line number="24" branch="false" hits="1"/>
+                        <line number="25" branch="false" hits="1"/>
+                        <line number="26" branch="false" hits="1"/>
+                        <line number="27" branch="false" hits="1"/>
+                        <line number="28" branch="false" hits="1"/>
+                        <line number="29" branch="false" hits="1"/>
+                        <line number="30" branch="false" hits="1"/>
+                        <line number="31" branch="false" hits="1"/>
+                        <line number="32" branch="false" hits="1"/>
+                        <line number="34" branch="false" hits="0"/>
+                        <line number="35" branch="false" hits="0"/>
+                        <line number="36" branch="false" hits="0"/>
+                        <line number="37" branch="false" hits="0"/>
+                        <line number="38" branch="false" hits="0"/>
+                        <line number="39" branch="false" hits="0"/>
+                        <line number="41" branch="false" hits="1"/>
+                        <line number="42" branch="false" hits="1"/>
+                        <line number="43" branch="false" hits="1"/>
+                        <line number="44" branch="false" hits="1"/>
+                        <line number="46" branch="false" hits="0"/>
+                        <line number="47" branch="false" hits="0"/>
+                        <line number="48" branch="false" hits="0"/>
+                        <line number="49" branch="false" hits="0"/>
+                        <line number="51" branch="false" hits="1"/>
+                        <line number="52" branch="false" hits="1"/>
+                        <line number="53" branch="false" hits="1"/>
+                        <line number="54" branch="false" hits="1"/>
+                        <line number="56" branch="false" hits="0"/>
+                        <line number="57" branch="false" hits="0"/>
+                        <line number="58" branch="false" hits="0"/>
+                        <line number="59" branch="false" hits="0"/>
+                        <line number="60" branch="false" hits="0"/>
+                    </lines>
+                </class>
+                <class name="Users.ollitapa.Documents.MyProject.MyProject.ContentView" filename="/Users/ollitapa/Documents/MyProject/MyProject/ContentView.swift" line-rate="0.5" branch-rate="1.0" complexity="0.0">
+                    <lines>
+                        <line number="12" branch="false" hits="1"/>
+                        <line number="13" branch="false" hits="1"/>
+                        <line number="14" branch="false" hits="1"/>
+                        <line number="18" branch="false" hits="0"/>
+                        <line number="19" branch="false" hits="0"/>
+                        <line number="20" branch="false" hits="0"/>
+                    </lines>
+                </class>
+                <class name="Users.ollitapa.Documents.MyProject.MyProject.AppDelegate" filename="/Users/ollitapa/Documents/MyProject/MyProject/AppDelegate.swift" line-rate="0.4117647058823529" branch-rate="1.0" complexity="0.0">
+                    <lines>
+                        <line number="16" branch="false" hits="1"/>
+                        <line number="17" branch="false" hits="1"/>
+                        <line number="18" branch="false" hits="1"/>
+                        <line number="19" branch="false" hits="1"/>
+                        <line number="23" branch="false" hits="0"/>
+                        <line number="24" branch="false" hits="0"/>
+                        <line number="25" branch="false" hits="0"/>
+                        <line number="26" branch="false" hits="0"/>
+                        <line number="27" branch="false" hits="0"/>
+                        <line number="29" branch="false" hits="0"/>
+                        <line number="30" branch="false" hits="0"/>
+                        <line number="31" branch="false" hits="0"/>
+                        <line number="32" branch="false" hits="0"/>
+                        <line number="33" branch="false" hits="0"/>
+                        <line number="38" branch="false" hits="4"/>
+                        <line number="39" branch="false" hits="4"/>
+                        <line number="40" branch="false" hits="4"/>
+                    </lines>
+                </class>
+            </classes>
+        </package>
+    </packages>
+</coverage>
