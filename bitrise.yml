@@ -88,7 +88,7 @@ workflows:
                exit 1
             fi
             # Only on line can differ. It includes a timestamp that changes each time run.
-            if [ $(diff -y --suppress-common-lines cobertura.xml cobertura-reference.xml | wc -l) -eq 1 ] ; then
+            if [ $(diff -y --suppress-common-lines cobertura.xml cobertura-reference.xml | wc -l) -eq 2 ] ; then
                echo "Generated correct cobertura xml"
             else
                echo "Cobertura xml does not match reference"

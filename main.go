@@ -1,21 +1,115 @@
 package main
 
 import (
+	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
+	"strings"
+	"time"
 )
+
+// FunctionCoverageReport structure
+type FunctionCoverageReport struct {
+	CoveredLines    int
+	ExecutableLines int
+	ExecutionCount  int
+	LineCoverage    float64
+	LineNumber      int
+	Name            string
+}
+
+// FileCoverageReport structure
+type FileCoverageReport struct {
+	CoveredLines    int
+	ExecutableLines int
+	Functions       []FunctionCoverageReport
+	LineCoverage    float64
+	Name            string
+	Path            string
+}
+
+// TargetCoverageReport structure
+type TargetCoverageReport struct {
+	BuildProductPath string
+	CoveredLines     int
+	ExecutableLines  int
+	Files            []FileCoverageReport
+	LineCoverage     float64
+	Name             string
+}
+
+// CoverageReport structure
+type CoverageReport struct {
+	ExecutableLines int
+	Targets         []TargetCoverageReport
+	LineCoverage    float64
+	CoveredLines    int
+}
+
+// XMLCoverage structure
+type XMLCoverage struct {
+	XMLName    xml.Name `xml:"coverage"`
+	LineRate   string   `xml:"line-rate,attr"`
+	BranchRate string   `xml:"branch-rate,attr"`
+
+	LinesCovered string `xml:"lines-covered,attr"`
+	LinesValid   string `xml:"lines-valid,attr"`
+
+	TimeStamp       string `xml:"timestamp,attr"`
+	Vesion          string `xml:"version,attr"`
+	Complexity      string `xml:"complexity,attr"`
+	BranchesValid   string `xml:"branches-valid,attr"`
+	BranchesCovered string `xml:"branches-covered,attr"`
+
+	Source   []string     `xml:"sources>source"`
+	Packages []XMLPackage `xml:"packages>package"`
+}
+
+// XMLPackage structure
+type XMLPackage struct {
+	XMLName xml.Name   `xml:"package"`
+	Classes []XMLClass `xml:"classes>class"`
+
+	Name       string `xml:"name,attr"`
+	LineRate   string `xml:"line-rate,attr"`
+	BranchRate string `xml:"branch-rate,attr"`
+	Complexity string `xml:"complexity,attr"`
+}
+
+// XMLClass structure
+type XMLClass struct {
+	XMLName xml.Name `xml:"class"`
+
+	Name       string `xml:"name,attr"`
+	Filename   string `xml:"filename,attr"`
+	LineRate   string `xml:"line-rate,attr"`
+	BranchRate string `xml:"branch-rate,attr"`
+	Complexity string `xml:"complexity,attr"`
+
+	Lines []XMLLine `xml:"lines>line"`
+}
+
+// XMLLine structure
+type XMLLine struct {
+	XMLName xml.Name `xml:"line"`
+	Number  string   `xml:"number,attr"`
+	Branch  string   `xml:"branch,attr"`
+	Hits    string   `xml:"hits,attr"`
+}
 
 func main() {
 	// Inputs
 	pathToXcresult := os.Getenv("path_to_xcresult")
 	outputDir := os.Getenv("xml_output_dir")
-	stepSourceDir := os.Getenv("BITRISE_STEP_SOURCE_DIR")
+	sourceDir := os.Getenv("BITRISE_SOURCE_DIR")
 
 	outputJSON := filepath.Join(outputDir, "coverage.json")
 	outputXML := filepath.Join(outputDir, "cobertura.xml")
-	conversionScript := filepath.Join(stepSourceDir, "xccov-json-to-cobertura-xml.swift")
 
 	// for _, pair := range os.Environ() {
 	// 	fmt.Println(pair)
@@ -34,10 +128,89 @@ func main() {
 	// Generate XML from JSON
 	fmt.Println("Generating xml from", outputJSON)
 
-	cmd2 := exec.Command("xcrun", "swift", conversionScript, outputJSON)
-	err2 := runAndSaveToFile(cmd2, outputXML)
-	if err2 != nil {
-		fmt.Printf("Failed to generate cobertura xml, error: %#v", err2.Error())
+	jsonData, jsonErr := ioutil.ReadFile(outputJSON)
+	//fmt.Println("Contents of file:", string(jsonData))
+	//fmt.Printf("%+v\n", report)
+	if jsonErr != nil {
+		fmt.Printf("Failed to read coverage json, error: %#v", jsonErr.Error())
+		os.Exit(1)
+	}
+
+	var report CoverageReport
+	json.Unmarshal(jsonData, &report)
+
+	xmlCov := &XMLCoverage{
+		LineRate:        fmt.Sprintf("%f", report.LineCoverage),
+		BranchRate:      "1.0",
+		TimeStamp:       fmt.Sprintf("%d", time.Now().Unix()),
+		LinesCovered:    fmt.Sprintf("%d", report.CoveredLines),
+		LinesValid:      fmt.Sprintf("%d", report.ExecutableLines),
+		Vesion:          "diff_coverage 1.0",
+		Complexity:      "0.0",
+		BranchesValid:   "1.0",
+		BranchesCovered: "1.0",
+		Source:          []string{sourceDir},
+	}
+
+	var packs []XMLPackage
+	for _, target := range report.Targets {
+
+		targetPath, _ := filepath.Split(target.Files[0].Path)
+		packageName := strings.ReplaceAll(targetPath, "/", ".")
+		packageName = strings.Trim(packageName, ".")
+		pack := XMLPackage{
+			Name:       packageName,
+			LineRate:   fmt.Sprintf("%f", target.LineCoverage),
+			BranchRate: "1.0",
+			Complexity: "0.0",
+		}
+
+		var covClasses = []XMLClass{}
+		for _, file := range target.Files {
+
+			var covClass = XMLClass{
+				Name:       packageName + filenameWithoutExtension(file.Name),
+				Filename:   strings.Replace(file.Path, sourceDir+"/", "", -1),
+				LineRate:   fmt.Sprintf("%f", file.LineCoverage),
+				BranchRate: "1.0",
+				Complexity: "0.0",
+			}
+
+			var covLines = []XMLLine{}
+
+			for _, function := range file.Functions {
+				for lineIdx := 0; lineIdx < function.ExecutableLines; lineIdx++ {
+					// Function coverage report won't be 100% reliable without parsing it by file
+					// (would need to use xccov view --file filePath currentDirectory + Build/Logs/Test/*.xccovarchive)
+					lineHits := 0
+					if lineIdx < function.CoveredLines {
+						lineHits = function.ExecutionCount
+					}
+					covLine := XMLLine{
+						Number: fmt.Sprintf("%d", function.LineNumber+lineIdx),
+						Branch: "false",
+						Hits:   fmt.Sprintf("%d", lineHits),
+					}
+					covLines = append(covLines, covLine)
+				}
+			}
+
+			covClass.Lines = covLines
+			covClasses = append(covClasses, covClass)
+
+		}
+
+		pack.Classes = covClasses
+		packs = append(packs, pack)
+	}
+
+	xmlCov.Packages = packs
+
+	out, _ := xml.MarshalIndent(xmlCov, "", "    ")
+	//fmt.Println()
+	err = writeToFile(outputXML, xml.Header+xmlDTD+string(out))
+	if err != nil {
+		fmt.Printf("Failed to write xml, error: %#v", err.Error())
 		os.Exit(1)
 	}
 
@@ -82,3 +255,72 @@ func runAndSaveToFile(cmd *exec.Cmd, outfile string) error {
 	stdOutStream.Close()
 	return nil
 }
+
+func writeToFile(outfile string, text string) error {
+	f, err := os.Create(outfile)
+	if err != nil {
+		return err
+	}
+	_, err = f.WriteString(text)
+	if err != nil {
+		f.Close()
+		return err
+	}
+	err = f.Close()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func filenameWithoutExtension(fn string) string {
+	return strings.TrimSuffix(fn, path.Ext(fn))
+}
+
+const xmlDTD = `<!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd" [
+    <!ELEMENT coverage (sources?, packages)>
+    <!ATTLIST coverage line-rate CDATA #REQUIRED>
+    <!ATTLIST coverage branch-rate CDATA #REQUIRED>
+    <!ATTLIST coverage lines-covered CDATA #REQUIRED>
+    <!ATTLIST coverage lines-valid CDATA #REQUIRED>
+    <!ATTLIST coverage branches-covered CDATA #REQUIRED>
+    <!ATTLIST coverage branches-valid CDATA #REQUIRED>
+    <!ATTLIST coverage complexity CDATA #REQUIRED>
+    <!ATTLIST coverage version CDATA #REQUIRED>
+    <!ATTLIST coverage timestamp CDATA #REQUIRED>
+    <!ELEMENT sources (source)*>
+    <!ELEMENT source (#PCDATA)>
+    <!ELEMENT packages (package)*>
+    <!ELEMENT package (classes)>
+    <!ATTLIST package name CDATA #REQUIRED>
+    <!ATTLIST package line-rate CDATA #REQUIRED>
+    <!ATTLIST package branch-rate CDATA #REQUIRED>
+    <!ATTLIST package complexity CDATA #REQUIRED>
+    <!ELEMENT classes (class)*>
+    <!ELEMENT class (methods, lines)>
+    <!ATTLIST class name CDATA #REQUIRED>
+    <!ATTLIST class filename CDATA #REQUIRED>
+    <!ATTLIST class line-rate CDATA #REQUIRED>
+    <!ATTLIST class branch-rate CDATA #REQUIRED>
+    <!ATTLIST class complexity CDATA #REQUIRED>
+    <!ELEMENT methods (method)*>
+    <!ELEMENT method (lines)>
+    <!ATTLIST method name CDATA #REQUIRED>
+    <!ATTLIST method signature CDATA #REQUIRED>
+    <!ATTLIST method line-rate CDATA #REQUIRED>
+    <!ATTLIST method branch-rate CDATA #REQUIRED>
+    <!ATTLIST method complexity CDATA #REQUIRED>
+    <!ELEMENT lines (line)*>
+    <!ELEMENT line (conditions)*>
+    <!ATTLIST line number CDATA #REQUIRED>
+    <!ATTLIST line hits CDATA #REQUIRED>
+    <!ATTLIST line branch CDATA "false">
+    <!ATTLIST line condition-coverage CDATA "100%">
+    <!ELEMENT conditions (condition)*>
+    <!ELEMENT condition EMPTY>
+    <!ATTLIST condition number CDATA #REQUIRED>
+    <!ATTLIST condition type CDATA #REQUIRED>
+    <!ATTLIST condition coverage CDATA #REQUIRED>
+]>
+
+`
