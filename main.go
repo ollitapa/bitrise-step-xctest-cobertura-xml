@@ -136,48 +136,61 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Decode Xcode coverage report from JSON
 	var report CoverageReport
 	json.Unmarshal(jsonData, &report)
 
+	// Create cobertura main coverage item
 	xmlCov := &XMLCoverage{
 		LineRate:        fmt.Sprintf("%f", report.LineCoverage),
-		BranchRate:      "1.0",
 		TimeStamp:       fmt.Sprintf("%d", time.Now().Unix()),
 		LinesCovered:    fmt.Sprintf("%d", report.CoveredLines),
 		LinesValid:      fmt.Sprintf("%d", report.ExecutableLines),
 		Vesion:          "diff_coverage 1.0",
-		Complexity:      "0.0",
-		BranchesValid:   "1.0",
-		BranchesCovered: "1.0",
+		BranchRate:      "1.0", // Not present in xcresult
+		Complexity:      "0.0", // Not present in xcresult
+		BranchesValid:   "1.0", // Not present in xcresult
+		BranchesCovered: "1.0", // Not present in xcresult
 		Source:          []string{sourceDir},
 	}
 
 	var packs []XMLPackage
+
+	// Go through each target and treat as package
 	for _, target := range report.Targets {
 
+		// If package is empty, skip
+		if len(target.Files) < 1 {
+			continue
+		}
+
+		// Package name
 		targetPath, _ := filepath.Split(target.Files[0].Path)
 		packageName := strings.ReplaceAll(targetPath, "/", ".")
 		packageName = strings.Trim(packageName, ".")
 		pack := XMLPackage{
 			Name:       packageName,
 			LineRate:   fmt.Sprintf("%f", target.LineCoverage),
-			BranchRate: "1.0",
-			Complexity: "0.0",
+			BranchRate: "1.0", // Not present in xcresult
+			Complexity: "0.0", // Not present in xcresult
 		}
 
 		var covClasses = []XMLClass{}
+
+		// Go through each file, which will represent class in xml coverage
 		for _, file := range target.Files {
 
 			var covClass = XMLClass{
 				Name:       packageName + filenameWithoutExtension(file.Name),
 				Filename:   strings.Replace(file.Path, sourceDir+"/", "", -1),
 				LineRate:   fmt.Sprintf("%f", file.LineCoverage),
-				BranchRate: "1.0",
-				Complexity: "0.0",
+				BranchRate: "1.0", // Not present in xcresult
+				Complexity: "0.0", // Not present in xcresult
 			}
 
 			var covLines = []XMLLine{}
 
+			// Go through each line in each function.
 			for _, function := range file.Functions {
 				for lineIdx := 0; lineIdx < function.ExecutableLines; lineIdx++ {
 					// Function coverage report won't be 100% reliable without parsing it by file
@@ -206,8 +219,9 @@ func main() {
 
 	xmlCov.Packages = packs
 
+	// Decode XML to a file
 	out, _ := xml.MarshalIndent(xmlCov, "", "    ")
-	//fmt.Println()
+	//fmt.Printf("%+v\n", out)
 	err = writeToFile(outputXML, xml.Header+xmlDTD+string(out))
 	if err != nil {
 		fmt.Printf("Failed to write xml, error: %#v", err.Error())
