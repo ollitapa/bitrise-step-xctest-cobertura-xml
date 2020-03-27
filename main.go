@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+// Xcode coverage report structure
+
 // FunctionCoverageReport structure
 type FunctionCoverageReport struct {
 	CoveredLines    int
@@ -50,6 +52,8 @@ type CoverageReport struct {
 	LineCoverage    float64
 	CoveredLines    int
 }
+
+// Cobertura XML coverage structure
 
 // XMLCoverage structure
 type XMLCoverage struct {
@@ -107,6 +111,24 @@ func main() {
 	pathToXcresult := os.Getenv("path_to_xcresult")
 	outputDir := os.Getenv("xml_output_dir")
 	sourceDir := os.Getenv("BITRISE_SOURCE_DIR")
+
+	ConvertXcodeCoverageToCobetura(
+		pathToXcresult,
+		outputDir,
+		sourceDir,
+	)
+}
+
+// ConvertXcodeCoverageToCobetura Converter
+// Converts xcode coverage file at `pathToXcresult` to
+// cobertura compatible xml format. Output is saved to
+// given directory. Provide also base directory of the
+// code source, so it can be referenced in the xml.
+func ConvertXcodeCoverageToCobetura(
+	pathToXcresult string,
+	outputDir string,
+	sourceDir string,
+) {
 
 	outputJSON := filepath.Join(outputDir, "coverage.json")
 	outputXML := filepath.Join(outputDir, "cobertura.xml")
