@@ -73,6 +73,17 @@ inputs:
       is_expand: true
       is_required: true
       value_options: []
+  - path_to_source_dir: $BITRISE_SOURCE_DIR
+    opts:
+      title: "Directory where the source files are located."
+      summary: Directory where the source files are located.
+      description: |
+        Directory where the source files that used by xcode to create the test "Path to the resulting coverage.json"
+        This directory is referenced by the <sources> item of cobertura xml.
+        Default is `$BITRISE_SOURCE_DIR`
+      is_expand: true
+      is_required: true
+      value_options: []
 
 outputs:
   - COVERAGE_XML_TEST_RESULT_PATH:

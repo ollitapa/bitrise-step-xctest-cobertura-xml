@@ -110,7 +110,7 @@ func main() {
 	// Inputs
 	pathToXcresult := os.Getenv("path_to_xcresult")
 	outputDir := os.Getenv("xml_output_dir")
-	sourceDir := os.Getenv("BITRISE_SOURCE_DIR")
+	sourceDir := os.Getenv("path_to_source_dir")
 
 	ConvertXcodeCoverageToCobetura(
 		pathToXcresult,
