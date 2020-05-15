@@ -21,3 +21,5 @@
 testing/cobertura.xml
 
 testing/coverage.json
+
+*.xcuserstate
