@@ -1,5 +1,7 @@
 # XCTest results to Cobertura XML
 
+[![Build Status](https://app.bitrise.io/app/b3f5d333bed8d039/status.svg?token=43LGxcxA7B5J08kh1NJ4Fg)](https://app.bitrise.io/app/b3f5d333bed8d039)
+
 Converts test results from XCTest step to Cobertura formatted XML to be uploaded to Coveralls or Sonarqube. The format is good for use with swift-plugin that needs to be installed to Sonar: [https://github.com/Idean/sonar-swift](https://github.com/Idean/sonar-swift)
 
 It is a go-lang port of a swift script developed by [Csaba](https://github.com/csaby02) in [this blog](https://www.cognizantsoftvision.com/blog/integrate-xcode-code-coverage-xccov-into-jenkins/).
