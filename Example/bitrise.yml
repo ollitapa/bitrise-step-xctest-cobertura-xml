@@ -1,0 +1,28 @@
+format_version: "8"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ios
+app:
+  envs:
+  - BITRISE_PROJECT_PATH: Example/Example.xcodeproj
+  - BITRISE_SCHEME: Example
+workflows:
+  test:
+    steps:
+    - xcode-test:
+        inputs:
+        - project_path: $BITRISE_PROJECT_PATH
+        - scheme: $BITRISE_SCHEME
+    - path::../.: {} # This is the bitrise-step-xctest-cobertura-xml. You need to change it on your own bitrise.yml
+    - script:
+        title: Do something with xml
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # debug log
+            set -x
+
+            # Here you can do something with the generated xml
+            # For example run sonarqube or just print the xml
+            cat $COVERAGE_XML_TEST_RESULT_PATH
