@@ -188,7 +188,7 @@ func ConvertXcodeCoverageToCobetura(
 
 		// Package name
 		targetPath, _ := filepath.Split(target.Files[0].Path)
-		packageName := strings.ReplaceAll(targetPath, "/", ".")
+		packageName := strings.Replace(targetPath, "/", ".", -1)
 		packageName = strings.Trim(packageName, ".")
 		pack := XMLPackage{
 			Name:       packageName,
