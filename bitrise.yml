@@ -87,10 +87,11 @@ workflows:
                echo "Coverage json does not match reference"
                exit 1
             fi
-            # Only on line can differ. It includes a timestamp that changes each time run.
-            if [ $(diff -y --suppress-common-lines cobertura.xml cobertura-reference.xml | wc -l) -eq 2 ] ; then
+            # Only 3 lines can differ. It includes a timestamp and path that changes each time run.
+            if [ $(diff -y --suppress-common-lines $COVERAGE_XML_TEST_RESULT_PATH "./cobertura-reference.xml" | wc -l) -lt 4 ] ; then
                echo "Generated correct cobertura xml"
             else
                echo "Cobertura xml does not match reference"
+               echo $(diff -y --suppress-common-lines $COVERAGE_XML_TEST_RESULT_PATH "./cobertura-reference.xml")
                exit 1
             fi
